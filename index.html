@@ -18,22 +18,21 @@
             cursor: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='32' height='32' viewBox='0 0 32 32'><circle cx='16' cy='16' r='6' stroke='white' stroke-width='1' fill='none'/></svg>") 16 16, auto;
         }
         
-        /* LIVELLO 1: Immagine di sfondo (Ora molto più luminosa e nitida) */
+        /* LIVELLO 1: Immagine di sfondo */
         .bg-image {
             position: absolute;
             top: 0; left: 0; width: 100%; height: 100%;
             background-image: url('./anime-tree-illustration.jpg'); 
             background-size: cover;
             background-position: center;
-            opacity: 0.85; /* Alzato per colori più vivi */
+            opacity: 0.85; 
             z-index: 1;
         }
 
-        /* LIVELLO 2: Gradiente (Patina nera ridotta al minimo) */
+        /* LIVELLO 2: Gradiente leggero */
         .bg-gradient {
             position: absolute;
             top: 0; left: 0; width: 100%; height: 100%;
-            /* Modificato per essere molto più trasparente */
             background: radial-gradient(circle at center, rgba(45, 19, 44, 0.1) 0%, rgba(15, 5, 20, 0.5) 100%);
             z-index: 2;
             pointer-events: none;
@@ -105,6 +104,10 @@
     <div class="bg-image"></div>
     <div class="bg-gradient"></div>
     
+    <audio id="bgMusic" loop>
+        <source src="traccia1.mp3" type="audio/mpeg">
+    </audio>
+    
     <div id="ui" onclick="handleInteraction()">
         <h1 class="korean-text">사랑해</h1>
         <h1 class="signature">Sei il mio bug preferito nel codice della vita.</h1>
@@ -117,6 +120,7 @@
         const canvas = document.getElementById('canvas');
         const ctx = canvas.getContext('2d');
         const uiContainer = document.getElementById('ui');
+        const bgMusic = document.getElementById('bgMusic');
 
         let width, height;
         let particles = [];
@@ -168,9 +172,20 @@
         }
 
         function handleInteraction() {
+            // Effetto grafico
             uiContainer.classList.add('active');
             setTimeout(() => uiContainer.classList.remove('active'), 100);
 
+            // --- AVVIO MUSICA ---
+            // Se la musica è in pausa, la facciamo partire
+            if (bgMusic.paused) {
+                bgMusic.play().catch(error => {
+                    console.log("Autoplay bloccato dal browser finché non si interagisce");
+                });
+                bgMusic.volume = 0.5; // Volume impostato al 50%
+            }
+
+            // Effetto particelle
             const centerX = width / 2;
             const centerY = height / 2;
             
