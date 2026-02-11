@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Saranghae - Per Te</title>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Great+Vibes&display=swap" rel="stylesheet">
+
+    <style>
+        body, html { 
+            margin: 0; 
+            padding: 0; 
+            width: 100%; 
+            height: 100%; 
+            overflow: hidden; 
+            background: #050505; 
+            /* Cursore a cerchio minimalista */
+            cursor: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='32' height='32' viewBox='0 0 32 32'><circle cx='16' cy='16' r='6' stroke='white' stroke-width='1' fill='none'/></svg>") 16 16, auto;
+        }
+        
+        .sky {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle at center, rgba(45, 19, 44, 0.6) 0%, rgba(15, 5, 20, 0.9) 100%);
+            z-index: 1;
+        }
+
+        .sky::after {
+            content: "";
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background-image: url('media/anime-tree-illustration.jpg'); 
+            background-size: cover;
+            background-position: center;
+            opacity: 0.4; 
+            filter: blur(2px);
+            z-index: -1;
+        }
+
+        #ui {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            text-align: center;
+            color: white;
+            z-index: 100;
+            font-family: 'Segoe UI', Tahoma, sans-serif;
+            user-select: none;
+            width: 90%;
+            /* Rende l'intera area sensibile al mouse per suggerire il click */
+            cursor: pointer;
+        }
+
+        .korean-text { 
+            font-size: 5.5rem; 
+            margin: 0; 
+            letter-spacing: 12px;
+            color: #ffffff;
+            filter: drop-shadow(0 0 10px rgba(255, 77, 109, 0.3));
+            transition: all 0.4s ease;
+            display: inline-block;
+        }
+
+        /* Effetto firma */
+        h1.signature {
+            font-family: 'Great Vibes', cursive;
+            font-size: 3.5rem;
+            margin-top: 20px;
+            color: #ffb7c5;
+            text-shadow: 0 0 15px rgba(0, 0, 0, 0.9);
+            font-weight: 400;
+            transition: all 0.4s ease;
+        }
+
+        .sub-message {
+            font-family: 'Great Vibes', cursive;
+            font-size: 2.2rem;
+            margin-top: 10px;
+            color: #ffffff;
+            text-shadow: 0 0 10px rgba(255, 77, 109, 0.8);
+            transition: all 0.4s ease;
+        }
+
+        /* Effetto hover sull'intera area per far capire di cliccare */
+        #ui:hover .korean-text {
+            filter: drop-shadow(0 0 30px #ffffff);
+            transform: scale(1.05);
+        }
+        #ui:hover .signature, #ui:hover .sub-message {
+            color: #ffffff;
+            text-shadow: 0 0 20px #ffb7c5;
+        }
+
+        /* Animazione attiva al click */
+        .active {
+            transform: translate(-50%, -50%) scale(0.95) !important;
+            transition: 0.1s;
+        }
+
+        canvas { position: absolute; top: 0; left: 0; z-index: 50; pointer-events: none; }
+    </style>
+</head>
+<body>
+
+    <div class="sky"></div>
+    
+    <div id="ui" onclick="handleInteraction()">
+        <h1 class="korean-text">사랑해</h1>
+        <h1 class="signature">Sei il mio bug preferito nel codice della vita.</h1>
+        <p class="sub-message">Buon San Valentino ❤️</p>
+    </div>
+
+    <canvas id="canvas"></canvas>
+
+    <script>
+        const canvas = document.getElementById('canvas');
+        const ctx = canvas.getContext('2d');
+        const uiContainer = document.getElementById('ui');
+
+        let width, height;
+        let particles = [];
+        let backgroundItems = [];
+
+        function init() {
+            width = canvas.width = window.innerWidth;
+            height = canvas.height = window.innerHeight;
+            
+            backgroundItems = [];
+            for(let i = 0; i < 60; i++) {
+                backgroundItems.push({
+                    x: Math.random() * width,
+                    y: Math.random() * height,
+                    size: Math.random() * 8 + 4,
+                    speed: Math.random() * 0.5 + 0.2,
+                    opacity: Math.random() * 0.3,
+                    type: Math.random() > 0.5 ? 'heart' : 'petal',
+                    rotation: Math.random() * Math.PI
+                });
+            }
+        }
+
+        function drawHeart(x, y, size, color, alpha = 1) {
+            ctx.save();
+            ctx.translate(x, y);
+            ctx.globalAlpha = alpha;
+            ctx.beginPath();
+            ctx.moveTo(0, 0);
+            ctx.bezierCurveTo(0, -size/2, -size, -size/2, -size, 0);
+            ctx.bezierCurveTo(-size, size/2, 0, size, 0, size * 1.5);
+            ctx.bezierCurveTo(0, size, size, size/2, size, 0);
+            ctx.bezierCurveTo(size, -size/2, 0, -size/2, 0, 0);
+            ctx.fillStyle = color;
+            ctx.fill();
+            ctx.restore();
+        }
+
+        function drawPetal(x, y, size, color, rotation, alpha = 1) {
+            ctx.save();
+            ctx.translate(x, y);
+            ctx.rotate(rotation);
+            ctx.globalAlpha = alpha;
+            ctx.beginPath();
+            ctx.ellipse(0, 0, size * 1.6, size * 0.8, 0, 0, Math.PI * 2);
+            ctx.fillStyle = color;
+            ctx.fill();
+            ctx.restore();
+        }
+
+        function handleInteraction() {
+            // Effetto feedback visivo al click
+            uiContainer.classList.add('active');
+            setTimeout(() => uiContainer.classList.remove('active'), 100);
+
+            const centerX = width / 2;
+            const centerY = height / 2;
+            
+            // Aumentato il numero di particelle per un effetto più "esplosivo"
+            for(let i = 0; i < 100; i++) {
+                particles.push({
+                    x: centerX,
+                    y: centerY,
+                    vx: (Math.random() - 0.5) * 25,
+                    vy: (Math.random() - 0.5) * 25,
+                    size: Math.random() * 10 + 5,
+                    color: Math.random() > 0.4 ? '#ff4d6d' : '#ffffff',
+                    type: Math.random() > 0.5 ? 'heart' : 'petal',
+                    life: 1.0,
+                    r: Math.random() * Math.PI
+                });
+            }
+        }
+
+        function animate() {
+            ctx.clearRect(0, 0, width, height);
+
+            backgroundItems.forEach(item => {
+                const color = item.type === 'heart' ? '#ff4d6d' : '#ffb7c5';
+                if(item.type === 'heart') {
+                    drawHeart(item.x, item.y, item.size, color, item.opacity);
+                } else {
+                    drawPetal(item.x, item.y, item.size, color, item.rotation, item.opacity);
+                }
+                item.y -= item.speed;
+                item.rotation += 0.005;
+                if(item.y < -50) item.y = height + 50;
+            });
+
+            particles.forEach((p, index) => {
+                p.x += p.vx;
+                p.y += p.vy;
+                p.vy += 0.15; 
+                p.life -= 0.01;
+                
+                if(p.life > 0) {
+                    if(p.type === 'heart') {
+                        drawHeart(p.x, p.y, p.size, p.color, p.life);
+                    } else {
+                        drawPetal(p.x, p.y, p.size, p.color, p.r, p.life);
+                        p.r += 0.1;
+                    }
+                } else {
+                    particles.splice(index, 1);
+                }
+            });
+
+            requestAnimationFrame(animate);
+        }
+
+        window.addEventListener('resize', init);
+        init();
+        animate();
+    </script>
+</body>
+</html>
