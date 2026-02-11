@@ -18,23 +18,23 @@
             cursor: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='32' height='32' viewBox='0 0 32 32'><circle cx='16' cy='16' r='6' stroke='white' stroke-width='1' fill='none'/></svg>") 16 16, auto;
         }
         
-        /* LIVELLO 1: Immagine di sfondo */
+        /* LIVELLO 1: Immagine di sfondo (Ora molto più luminosa e nitida) */
         .bg-image {
             position: absolute;
             top: 0; left: 0; width: 100%; height: 100%;
             background-image: url('./anime-tree-illustration.jpg'); 
             background-size: cover;
             background-position: center;
-            opacity: 0.5; /* Regola questo valore se è troppo chiara/scura */
-            filter: blur(1px);
+            opacity: 0.85; /* Alzato per colori più vivi */
             z-index: 1;
         }
 
-        /* LIVELLO 2: Gradiente sfumato sopra l'immagine */
+        /* LIVELLO 2: Gradiente (Patina nera ridotta al minimo) */
         .bg-gradient {
             position: absolute;
             top: 0; left: 0; width: 100%; height: 100%;
-            background: radial-gradient(circle at center, rgba(45, 19, 44, 0.4) 0%, rgba(15, 5, 20, 0.95) 100%);
+            /* Modificato per essere molto più trasparente */
+            background: radial-gradient(circle at center, rgba(45, 19, 44, 0.1) 0%, rgba(15, 5, 20, 0.5) 100%);
             z-index: 2;
             pointer-events: none;
         }
